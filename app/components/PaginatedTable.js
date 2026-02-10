@@ -67,30 +67,37 @@ export default function PaginatedTable({ voters }) {
 
           {/* Table Body */}
           <div className="divide-y divide-gray-200">
-            {currentItems.map((voter) => (
-              <div 
-                key={voter.id} 
-                className="grid grid-cols-8 min-w-[1200px] hover:bg-gray-50 transition-colors"
-              >
-                <div className="px-4 py-3 text-sm text-gray-900">{voter.ক্রমিক}</div>
-                <div className="px-4 py-3 text-sm font-medium text-gray-900">{voter.নাম}</div>
-                <div className="px-4 py-3 text-sm text-gray-900 font-mono dir-ltr">{voter['ভোটার নং']}</div>
-                <div className="px-4 py-3 text-sm text-gray-900">{voter['পিতা/স্বামী']}</div>
-                <div className="px-4 py-3 text-sm text-gray-900">{voter.মাতা}</div>
-                <div className="px-4 py-3 text-sm">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    voter.পেশা === 'সরকারী চাকুরী' ? 'bg-green-100 text-green-800' :
-                    voter.পেশা === 'ব্যবসা' ? 'bg-purple-100 text-purple-800' :
-                    voter.পেশা === 'শিক্ষক' ? 'bg-blue-100 text-blue-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
-                    {voter.পেশা}
-                  </span>
+            {currentItems.map((voter, index) => {
+              // Generate a unique key
+              const uniqueKey = voter.id || 
+                                voter['ভোটার নং'] || 
+                                `${voter.নাম}-${voter['জন্ম তারিখ']}-${index}`;
+              
+              return (
+                <div 
+                  key={uniqueKey}
+                  className="grid grid-cols-8 min-w-[1200px] hover:bg-gray-50 transition-colors"
+                >
+                  <div className="px-4 py-3 text-sm text-gray-900">{voter.ক্রমিক || `#${offset + index + 1}`}</div>
+                  <div className="px-4 py-3 text-sm font-medium text-gray-900">{voter.নাম}</div>
+                  <div className="px-4 py-3 text-sm text-gray-900 font-mono dir-ltr">{voter['ভোটার নং']}</div>
+                  <div className="px-4 py-3 text-sm text-gray-900">{voter['পিতা/স্বামী']}</div>
+                  <div className="px-4 py-3 text-sm text-gray-900">{voter.মাতা}</div>
+                  <div className="px-4 py-3 text-sm">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      voter.পেশা === 'সরকারী চাকুরী' ? 'bg-green-100 text-green-800' :
+                      voter.পেশা === 'ব্যবসা' ? 'bg-purple-100 text-purple-800' :
+                      voter.পেশা === 'শিক্ষক' ? 'bg-blue-100 text-blue-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {voter.পেশা}
+                    </span>
+                  </div>
+                  <div className="px-4 py-3 text-sm text-gray-900">{voter['জন্ম তারিখ']}</div>
+                  <div className="px-4 py-3 text-sm text-gray-900">{voter.ঠিকানা}</div>
                 </div>
-                <div className="px-4 py-3 text-sm text-gray-900">{voter['জন্ম তারিখ']}</div>
-                <div className="px-4 py-3 text-sm text-gray-900">{voter.ঠিকানা}</div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

@@ -8,14 +8,22 @@ import voters from './data/voters'
 import PaginatedTable from './components/PaginatedTable';
 import { Users, Grid, List, Smartphone, Wifi, WifiOff } from 'lucide-react';
 import { exportToCSV, downloadCSV, loadVoters } from './utils/dataLoader';
+import { Voter } from './type/voter';
+
+// Define filters type
+interface Filters {
+  পেশা?: string;
+  এলাকা?: string;
+  'জন্ম বছর'?: string;
+}
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState('table');
-  const [voters, setVoters] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState<Filters>({});
   const [connectionStatus, setConnectionStatus] = useState('online');
+  const [voters, setVoters] = useState<Voter[]>([]);
 
   // Load voters data
   useEffect(() => {
@@ -58,22 +66,22 @@ export default function Home() {
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
       result = result.filter(voter =>
-        voter.নাম.toLowerCase().includes(term) ||
-        voter['ভোটার নং'].includes(term) ||
-        voter['পিতা/স্বামী'].toLowerCase().includes(term) ||
-        voter.মাতা.toLowerCase().includes(term) ||
-        voter.ঠিকানা.toLowerCase().includes(term)
+        voter.নাম?.toLowerCase().includes(term) ||
+        voter['ভোটার নং']?.includes(term) ||
+        voter['পিতা/স্বামী']?.toLowerCase().includes(term) ||
+        voter.মাতা?.toLowerCase().includes(term) ||
+        voter.ঠিকানা?.toLowerCase().includes(term)
       );
     }
 
-    // Apply filters
+    // Apply filters with type safety
     if (filters.পেশা) {
       result = result.filter(voter => voter.পেশা === filters.পেশা);
     }
     
     if (filters.এলাকা) {
       result = result.filter(voter => 
-        voter.ঠিকানা.toLowerCase().includes(filters.এলাকা.toLowerCase())
+        voter.ঠিকানা?.toLowerCase().includes(filters.এলাকা?.toLowerCase() || '')
       );
     }
     
@@ -88,7 +96,8 @@ export default function Home() {
     return result;
   }, [voters, searchTerm, filters]);
 
-  const handleSearch = useCallback((term, newFilters = {}) => {
+  // Fix: Add proper types to handleSearch parameters
+  const handleSearch = useCallback((term: string, newFilters: Filters = {}) => {
     setSearchTerm(term);
     setFilters(newFilters);
   }, []);
@@ -168,7 +177,7 @@ export default function Home() {
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
           onExport={handleExport}
-          filteredVishers={filteredVoters.length}
+          filteredVoters={filteredVoters.length}  // Fix: Changed from filteredVishers to filteredVoters
           totalVoters={voters.length}
           loading={loading}
         />
