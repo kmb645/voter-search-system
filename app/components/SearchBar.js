@@ -53,6 +53,7 @@ export default function SearchBar({
     onSearch(searchTerm, {});
   };
 
+  // TODO: There are input text search bar start right side i need it left 
   return (
     <div className="w-full max-w-4xl mx-auto">
       <div className="bg-white rounded-xl shadow-lg p-6">
@@ -88,16 +89,19 @@ export default function SearchBar({
         {/* Search Input */}
         <form onSubmit={handleSearch} className="relative mb-4">
           <div className="relative">
-            <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            {/* Move Search icon to left */}
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="ভোটার নং, নাম, পিতা/স্বামীর নাম বা ঠিকানা অনুসন্ধান করুন..."
-              className="w-full pl-4 pr-12 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 text-lg"
-              dir="rtl"
+              className="w-full pl-12 pr-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 text-lg"
+              // Remove dir="rtl" or change to dir="ltr" for left-to-right text
+              dir="ltr"
             />
           </div>
+          {/* Move X button to right side */}
           {searchTerm && (
             <button
               type="button"
@@ -105,7 +109,7 @@ export default function SearchBar({
                 setSearchTerm('');
                 onSearch('', filters);
               }}
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
             >
               <X className="w-5 h-5" />
             </button>

@@ -6,16 +6,49 @@ export async function loadVoters() {
   }
 
   try {
-    // For production, this can be an API call
-    // For now, we'll import the JSON directly
-    const response = await fetch('/voters.json');
-    if (!response.ok) {
+    // Load data from both JSON files
+    const [votersResponse, femaleResponse] = await Promise.all([
+      fetch('/voters.json'),
+      fetch('/female.json')
+    ]);
+
+    if (!votersResponse.ok || !femaleResponse.ok) {
       throw new Error('Failed to load voters data');
     }
-    votersCache = await response.json();
+
+    const maleVoters = await votersResponse.json();
+    const femaleVoters = await femaleResponse.json();
+
+    // Combine both datasets
+    // Note: You might need to adjust this based on the actual structure of your JSON files
+    const combinedVoters = [
+      ...(Array.isArray(maleVoters) ? maleVoters : []),
+      ...(Array.isArray(femaleVoters) ? femaleVoters : [])
+    ];
+
+    // Optional: Add a unique ID to each voter if not present
+    combinedVoters.forEach((voter, index) => {
+      if (!voter.id) {
+        voter.id = `voter_${index}`;
+      }
+    });
+
+    votersCache = combinedVoters;
     return votersCache;
   } catch (error) {
     console.error('Error loading voters:', error);
+    
+    // Fallback: Try to load at least one file
+    try {
+      const response = await fetch('/voters.json');
+      if (response.ok) {
+        votersCache = await response.json();
+        return votersCache;
+      }
+    } catch (fallbackError) {
+      console.error('Fallback loading also failed:', fallbackError);
+    }
+    
     return [];
   }
 }
